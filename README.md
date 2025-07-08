@@ -1,2 +1,2 @@
-# utilities
+# Some useful PHP utility classes
 
