@@ -927,25 +927,29 @@ if ( ! class_exists( '\msltns\utilities\Utils' ) ) {
          * @return string
          */
         public function create_img_tag( $src, $width = '', $height = '', $class = '', $title = '', $alt = '' ) {
-            $img = '<img src="' . $src . '"';
-            if ( ! empty( $width ) ) {
-                $img .= ' width="' . $width . '"';
-            }
-            if ( ! empty( $height ) ) {
-                $img .= ' height="' . $height . '"';
-            }
-            if ( ! empty( $class ) ) {
-                $img .= ' class="' . $class . '"';
-            }
-            if ( ! empty( $title ) ) {
-                $img .= ' title="' . $title . '"';
-            }
-            if ( ! empty( $alt ) ) {
-                $img .= ' alt="' . $alt . '"';
-            }
-            $img .= '>';
-            
-            return $img;
+    		$img = '<';
+    		$img .= 'img';
+    		if ( ! empty( $src ) ) {
+    			$img .= ' src="' . $src . '"';
+    		}
+    		if ( ! empty( $width ) ) {
+    			$img .= ' width="' . $width . '"';
+    		}
+    		if ( ! empty( $height ) ) {
+    			$img .= ' height="' . $height . '"';
+    		}
+    		if ( ! empty( $class ) ) {
+    			$img .= ' class="' . $class . '"';
+    		}
+    		if ( ! empty( $title ) ) {
+    			$img .= ' title="' . $title . '"';
+    		}
+    		if ( ! empty( $alt ) ) {
+    			$img .= ' alt="' . $alt . '"';
+    		}
+    		$img .= '>';
+
+    		return $img;
         }
         
         /**
