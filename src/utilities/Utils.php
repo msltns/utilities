@@ -516,9 +516,7 @@ if ( ! class_exists( '\msltns\utilities\Utils' ) ) {
 		 * @return string|bool
 		 */
 		public function get_referer() {
-			
 			$ref = false;
-			
 			if ( !empty( $_GET['referer'] ) ) {
 				$ref = $_GET['referer'];
 			}
