@@ -69,13 +69,20 @@ if ( ! class_exists( '\msltns\utilities\iCal_Generator' ) ) {
                         $location = str_replace( ',', '\,', $location );
                     }
                     
+                    $trigger = false;
                     $alarm = isset( $item['alarm'] ) ? $item['alarm'] : false;
                     $alarm = in_array( $alarm, [ true, 'true', 'yes', 'on', '1', 1, 'active' ], true );
                     if ( $alarm ) {
-                        $trigger = ! empty( $item['trigger'] ) ? $item['trigger'] : false;
-                        if ( ! $trigger ) {
-                            /* notification at the event start time */
-                            $trigger = 'P0DT0H0M0S';
+                        if ( ! empty( $item['trigger'] ) ) {
+                            /* notification at the trigger time */
+                            $trigger = 'TRIGGER:' . $item['trigger'];
+                        } else if ( ! empty( $item['trigger_ts'] ) ) {
+                            /* notification at the trigger time */
+                            $trigger_dt = date( 'Ymd\THis', $item['trigger_ts'] );
+                            $trigger = "TRIGGER;VALUE=DATE-TIME:{$trigger_dt}Z";
+                        } else {
+                            /* default notification at the event start time */
+                            $trigger = 'TRIGGER:-P0DT0H0M0S';
                         }
                     }
                     
@@ -101,17 +108,17 @@ if ( ! class_exists( '\msltns\utilities\iCal_Generator' ) ) {
                         $iCal .= "LOCATION:{$location}\r\n";
                     }
     				
-    				$iCal .= "SEQUENCE:0\r\n"; 
-    				$iCal .= "STATUS:CONFIRMED\r\n"; 
-    				$iCal .= "SUMMARY:{$summary}\r\n"; 
-    				$iCal .= "TRANSP:OPAQUE\r\n"; 
-    				$iCal .= "X-APPLE-TRAVEL-ADVISORY-BEHAVIOR:AUTOMATIC\r\n"; 
+    				$iCal .= "SEQUENCE:0\r\n";
+    				$iCal .= "STATUS:CONFIRMED\r\n";
+    				$iCal .= "SUMMARY:{$summary}\r\n";
+    				$iCal .= "TRANSP:OPAQUE\r\n";
+    				$iCal .= "X-APPLE-TRAVEL-ADVISORY-BEHAVIOR:AUTOMATIC\r\n";
     				
                     if ( $alarm ) {
-        				$iCal .= "BEGIN:VALARM\r\n"; 
-        				$iCal .= "ACTION:DISPLAY\r\n"; 
-        				$iCal .= "DESCRIPTION:{$summary}\r\n"; 
-        				$iCal .= "TRIGGER:-{$trigger}\r\n"; 
+        				$iCal .= "BEGIN:VALARM\r\n";
+        				$iCal .= "ACTION:DISPLAY\r\n";
+        				$iCal .= "DESCRIPTION:{$summary}\r\n";
+                        $iCal .= "{$trigger}\r\n";
         				$iCal .= "END:VALARM\r\n"; 
                     }
                     
