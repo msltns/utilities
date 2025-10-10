@@ -51,6 +51,7 @@ if ( ! class_exists( '\msltns\utilities\iCal_Generator' ) ) {
                     $start_timestamp = $item['start_ts'];
                     $formatted_start_date = date( 'Ymd\THis', $start_timestamp );
                     
+                    $formatted_end_date = $formatted_start_date;
                     $end_timestamp = ! empty( $item['end_ts'] ) ? $item['end_ts'] : false;
                     if ( $end_timestamp ) {
                         $formatted_end_date = date( 'Ymd\THis', $end_timestamp );
