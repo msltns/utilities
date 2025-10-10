@@ -29,9 +29,6 @@ if ( ! class_exists( '\msltns\utilities\iCal_Generator' ) ) {
 	
         public function generate_ical( array $items, string $name = 'Calendar', string $timezone = 'Europe/Berlin' ): string {
         
-            // date_default_timezone_set( $timezone );
-            // setlocale ( LC_ALL, 'de_DE' );
-            
             $iCal  = '';
     		$iCal .= "BEGIN:VCALENDAR\r\n";
     		$iCal .= "PRODID:-//MSLTNS//Events Calendar//EN\r\n";
@@ -80,7 +77,7 @@ if ( ! class_exists( '\msltns\utilities\iCal_Generator' ) ) {
                         } else if ( ! empty( $item['trigger_ts'] ) ) {
                             /* notification at the trigger time */
                             $trigger_dt = date( 'Ymd\THis', $item['trigger_ts'] );
-                            $trigger = "TRIGGER;VALUE=DATE-TIME:{$trigger_dt}Z";
+                            $trigger = "TRIGGER;VALUE=DATE-TIME:{$trigger_dt}";
                         } else {
                             /* default notification at the event start time */
                             $trigger = 'TRIGGER:-P0DT0H0M0S';
