@@ -1080,32 +1080,57 @@ if ( ! class_exists( '\msltns\utilities\Utils' ) ) {
         public function unesc_string( $string ) {
             return str_replace( ["\'", '\"'], ["'", '"'], $string );
         }
-		
+        
 		/**
-		 * Writes debug messages to a logfile.
+		 * Sends a debug message to a logging API.
 		 *
 		 * @param mixed 	$message 	Debug message.
 		 * @param string 	$level   	Debug level.
 		 * @param array     $context   	Debug context parameters.
-		 * @return  void
+		 * @return void
 		 */
-	    public function log( $message, string $level = 'info', array $context = [] ): void {
+		private function log_to_stream( $message, string $level = 'info', array $context = [] ): void {
 			if ( is_array( $message ) || is_object( $message ) ) {
                 $message = print_r( $message, true );
             }
             
-			$path = '';
-			if ( $this->is_wp_env() && defined( 'WP_CONTENT_DIR' ) ) {
-				$path = WP_CONTENT_DIR . '/debug.log';
-			}
+            if ( class_exists( '\msltns\logging\Logstream' ) ) {
+                $logstream = \msltns\logging\Logstream::getInstance();
+                $logstream->log( $message, $level, $context );
+            }
+		}
+		
+		/**
+		 * Output a debug message.
+		 *
+		 * @param mixed 	$message 	Debug message.
+		 * @param string 	$level   	Debug level.
+		 * @param array     $context   	Debug context parameters.
+		 * @return void
+		 */
+		public function log( $message, string $level = 'info', array $context = [] ): void {
+			if ( is_array( $message ) || is_object( $message ) ) {
+                $message = print_r( $message, true );
+            }
             
-            if ( class_exists( '\msltns\logging\Logger' ) ) {
+			if ( defined( 'LOGSTREAM_ACTIVE' ) && LOGSTREAM_ACTIVE === true 
+                && class_exists( '\msltns\logging\Logstream' ) ) {
+                $this->log_to_stream( $message, $level, $context );
+                
+            } else if ( class_exists( '\msltns\logging\Logger' ) ) {
+    			$path = '';
+                if ( defined( 'LOGFILE_PATH' ) && ! empty( LOGFILE_PATH ) ) {
+                    $path = LOGFILE_PATH;
+                } else if ( $this->is_wp_env() && defined( 'WP_CONTENT_DIR' ) ) {
+    				$path = WP_CONTENT_DIR . '/debug.log';
+    			}
     			$logger = \msltns\logging\Logger::getInstance( 'Utils', $path );
                 $logger->log( $message, $level, $context );
+                
             } else {
                 error_log( '[' . strtoupper( $level ) . '] ' . $message );
             }
-	    }
+		}
 		
 		/**********************************************
 		 * 
