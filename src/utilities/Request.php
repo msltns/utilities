@@ -98,7 +98,7 @@ if ( ! class_exists( '\msltns\utilities\Request' ) ) {
 
         public function withUploadedFiles( array $uploadedFiles ): ServerRequestInterface { return $this->request->withUploadedFiles( $uploadedFiles ); }
 
-        public function getParsedBody() { return $this->request->getParsedBody(); }
+        //public function getParsedBody() { return $this->request->getParsedBody(); }
 
         public function withParsedBody( $data ): ServerRequestInterface { return $this->request->withParsedBody( $data ); }
 
@@ -127,6 +127,14 @@ if ( ! class_exists( '\msltns\utilities\Request' ) ) {
             }
             
             return $default;
+        }
+        
+        public function getParsedBody() {
+            // works with JSON and x-www-form-urlencoded
+            $data = json_decode( (string) $this->request->getBody(), true ) ?: [];
+            if ( ! is_array( $data ) ) { $data = $this->request->getParsedBody() ?: []; }
+            
+            return $data;
         }
         
     }
