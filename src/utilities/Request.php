@@ -114,6 +114,14 @@ if ( ! class_exists( '\msltns\utilities\Request' ) ) {
          * Own implementation 
          ***************************************/
         
+        public function getParsedBody(): array {
+            // works with JSON and x-www-form-urlencoded
+            $data = json_decode( (string) $this->request->getBody(), true ) ?: [];
+            if ( ! is_array( $data ) ) { $data = (array) $this->request->getParsedBody() ?: []; }
+            
+            return $data;
+        }
+        
         public function getParam( string $name, mixed $default = null ) {
             
             $get_params = (array) $this->request->getQueryParams();
@@ -121,22 +129,12 @@ if ( ! class_exists( '\msltns\utilities\Request' ) ) {
                 return $get_params[$name];
             }
             
-            $post_params = (array) $this->request->getParsedBody();
+            $post_params = $this->getParsedBody();
             if ( is_array( $post_params ) && !empty( $post_params ) && isset( $post_params[$name] ) ) {
                 return $post_params[$name];
             }
             
             return $default;
         }
-        
-        public function getParsedBody() {
-            // works with JSON and x-www-form-urlencoded
-            $data = json_decode( (string) $this->request->getBody(), true ) ?: [];
-            if ( ! is_array( $data ) ) { $data = $this->request->getParsedBody() ?: []; }
-            
-            return $data;
-        }
-        
     }
-    
 }
